@@ -5,16 +5,16 @@ namespace Motor.Core.Actors;
 public abstract class Actor
 {
     readonly Dictionary<Type, ModifierBase> _modifiers = [];
-    readonly List<Actor> _children = [];
+    readonly internal List<Actor> children = [];
 
-    public Actor()
+    protected Actor()
     {
         AddModifier(new Transform2dModifier());
     }
 
     public void AddChild(Actor child)
     {
-        _children.Add(child);
+        children.Add(child);
     }
 
     public void AddModifier(ModifierBase modifier)

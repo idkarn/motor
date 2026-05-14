@@ -7,7 +7,7 @@ public static class Engine
     public static event Action? OnUpdate;
     public static event Action? OnFixedUpdate;
 
-    public static void Run()
+    public static void Run(Space space)
     {
         Raylib.SetTraceLogLevel(TraceLogLevel.Warning);
 
@@ -15,7 +15,8 @@ public static class Engine
 
         while (Screen.IsOpen)
         {
-            ModifiersRegistry.UpdateAll();
+            space.UpdateTransforms();
+            ModifiersRegistry.UpdateAll(Raylib.GetFrameTime());
 
             Screen.Begin();
 
