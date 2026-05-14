@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Motor.Core/Motor.Core.csproj" />
+  <Project Path="Motor.Editor/Motor.Editor.csproj" />
+  <Project Path="Test/Test.csproj" />
+</Solution>
