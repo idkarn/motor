@@ -1,13 +1,12 @@
-using Raylib_cs;
+namespace Motor.Core.Input;
 
-namespace Motor.Core;
-
-public static class Input
+enum ButtonState : byte
 {
-    public static bool IsKeyDown(KeyboardKey key)
-    {
-        return Raylib.IsKeyDown((Raylib_cs.KeyboardKey)key);
-    }
+    Unknown,
+    NotPressed, // todo: work around this crutch
+    Up,
+    Down,
+    Pressed
 }
 
 public enum KeyboardKey

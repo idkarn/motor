@@ -16,10 +16,16 @@ static class ModifiersRegistry
     {
         if (modifier is VisualModifierBase _drawableMod)
             _drawables.Add(_drawableMod);
-        else if (modifier is Controller _controllerMod)
-            _controllers.Add(new ControllerRef(_controllerMod));
+        else if (modifier is IController _controllerMod)
+            _controllers.Add(new ControllerRef(actor, _controllerMod));
 
         InjectDependencies(actor, modifier);
+    }
+
+    internal static void StartAll()
+    {
+        foreach (var controller in _controllers)
+            controller.Start();
     }
 
     internal static void UpdateAll(float dt)

@@ -1,75 +1,110 @@
 ﻿using System.Numerics;
-using ImGuiNET;
-using Raylib_cs;
-using rlImGui_cs;
+using Motor.Core;
+using Motor.Core.Actors.Graphics;
+using Motor.Core.Actors.UI;
+using Motor.Core.Input;
+using Motor.Core.Modifiers.Controller;
+using Motor.Core.Modifiers.Visual;
 
 namespace Motor.Editor;
+
+class ButtonController : Controller<Button<Core.Modifiers.Area.Rectangle, Texture>>
+{
+    bool isMouseOver = false;
+    bool dragged = false;
+    Vector2 shift;
+
+    void Start()
+    {
+        GetModifier<Core.Modifiers.Area.Area2d>()!.IgnoreMouse = false;
+        Actor.MouseEnter += () => isMouseOver = true;
+        Actor.MouseExit += () => isMouseOver = false;
+    }
+
+    void Update(float dt)
+    {
+        // if (isMouseOver || dragged)
+        //     GetModifier<Texture>()!.Color = Color16.Red;
+        // else
+        //     GetModifier<Texture>()!.Color = Color16.Green;
+
+        if (!dragged && isMouseOver && Input.IsMouseDown(MouseButton.Left))
+        {
+            dragged = true;
+            // Actor.Text = "uwu";
+            shift = Transform.Position - Input.GetMousePosition();
+            // GetModifier<Texture>()!.Color = Color16.Red;
+        }
+        else if (dragged && !Input.IsMouseDown(MouseButton.Left))
+        {
+            dragged = false;
+            // Actor.Text = "drag me";
+            // GetModifier<Texture>()!.Color = Color16.Green;
+        }
+        if (dragged)
+            Transform.Position = Input.GetMousePosition() + shift;
+    }
+}
 
 internal static class Program
 {
     [STAThread]
     public static void Main(string[] args)
     {
-        const int screenWidth = 800;
-        const int screenHeight = 800;
-        const int virtualWidth = 128; // The "pico" resolution
-        const int virtualHeight = 128;
-        const float scale = 6.25f;
-
-        Raylib.InitWindow(screenWidth, screenHeight, "Test window");
-
-        Raylib.SetTargetFPS(30);
-
-        var target = Raylib.LoadRenderTexture(virtualWidth, virtualHeight);
-        Raylib.SetTextureFilter(target.Texture, TextureFilter.Point);
-
-        rlImGui.Setup();
-
-        // Loop until the window is closed
-        while (!Raylib.WindowShouldClose())
+        var game = new Game()
         {
-            var mousePos = Raylib.GetMousePosition();
-            var virtualMouse = new Vector2(mousePos.X / scale, mousePos.Y / scale);
+            Name = "Editor"
+        };
 
-            // --- RENDERING INTO TEXTURE ---
-            Raylib.BeginTextureMode(target);
-            {
-                Raylib.ClearBackground(Color.Blank);
+        var tree = new RectangleShape
+        {
+            Position = new Vector2(25, Screen.Height * 0.66f / 2 + 8),
+            Size = new Vector2(50, Screen.Height * 0.66f),
+            IsHollow = true,
+            Color = Color16.DarkGrey
+        };
 
-                rlImGui.Begin();
+        var toolbar = new RectangleShape
+        {
+            Position = new Vector2(Screen.Width / 2, 4),
+            Size = new Vector2(Screen.Width, 9),
+            IsHollow = true,
+            Color = Color16.DarkGrey
+        };
 
-                var io = ImGui.GetIO();
-                io.MousePos = virtualMouse;
-                io.DisplaySize = new Vector2(virtualWidth, virtualHeight);
+        var border = new RectangleShape
+        {
+            Position = new Vector2(Screen.Width / 2, Screen.Height / 2),
+            Size = new Vector2(Screen.Width, Screen.Height),
+            IsHollow = true,
+        };
 
-                ImGui.Begin("Test");
-                ImGui.Text($"{io.MousePos.X}, {io.MousePos.Y}");
-                ImGui.End();
+        var title = new Label("Motor")
+        {
+            Color = Color16.DarkGreen,
+            Position = new Vector2(30, 5)
+        };
 
-                Console.WriteLine($"{io.MousePos} {io.DisplaySize}");
+        Engine.Init();
 
-                rlImGui.End();
-            }
-            Raylib.EndTextureMode();
+        var btn = new Button<Core.Modifiers.Area.Rectangle, Texture>
+        {
+            Position = new Vector2(Screen.Width / 2, Screen.Height / 2),
+            // Text = "drag me",
+            TextColor = Color16.White,
+            Scale = new Vector2(0.3f, 0.3f)
+        };
+        btn.AddModifier(new ButtonController());
+        btn.GetModifier<Texture>()!.Load(Path.Combine(Path.Combine(AppContext.BaseDirectory, "data"), "X.png"));
 
-            // --- RENDERING ON SCREEN ---
-            Raylib.BeginDrawing();
-            {
-                Raylib.ClearBackground(Color.Black);
+        game.MainScene.Add(tree);
+        game.MainScene.Add(border);
+        game.MainScene.Add(toolbar);
+        game.MainScene.Add(btn);
 
-                Rectangle source = new(0, 0, virtualWidth, -virtualHeight);
-                Rectangle dest = new(0, 0, virtualWidth, virtualHeight);
+        // game.Save();
 
-                Raylib.DrawTexturePro(target.Texture, source, dest, Vector2.Zero, 0, Color.White);
-
-                Raylib.DrawFPS(10, 10);
-            }
-            Raylib.EndDrawing();
-        }
-
-        rlImGui.Shutdown();
-
-        // Close the window
-        Raylib.CloseWindow();
+        Engine.Load(game);
+        Engine.Start();
     }
 }

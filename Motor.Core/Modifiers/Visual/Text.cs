@@ -2,11 +2,11 @@ using Raylib_cs;
 
 namespace Motor.Core.Modifiers.Visual;
 
-public abstract class Shape : VisualModifierBase
+public class Text : VisualModifierBase
 {
+    public string Value { get; set; } = "";
+    public int FontSize { get; set; } = 5;
     protected Color _rayColor;
-    public bool IsHollow { get; set; } = false;
-    public int LineWidth { get; set; } = 1;
     Color16 _color;
     public Color16 Color
     {
@@ -18,7 +18,12 @@ public abstract class Shape : VisualModifierBase
         }
     }
 
-    public Shape()
+    public override void Draw()
+    {
+        Raylib.DrawTextEx(Screen.Font, Value, _transform.Position - Raylib.MeasureTextEx(Screen.Font, Value, FontSize, 1) / 2, FontSize, 1, _rayColor);
+    }
+
+    public Text()
     {
         Color = Color16.Green;
     }

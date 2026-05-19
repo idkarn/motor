@@ -1,4 +1,5 @@
 using System.Reflection;
+using Motor.Core.Actors;
 
 namespace Motor.Core.Modifiers.Controller;
 
@@ -6,25 +7,12 @@ class ControllerRef
 {
     private readonly Action? _startMethod;
     private readonly Action<float>? _updateMethod;
-    private readonly Controller _instance;
-    // public Input Input
-    // {
-    //     set => _instance.Input = value;
-    // }
-    internal Transform2dModifier Transform
-    {
-        get => _instance.Transform;
-        set => _instance.Transform = value;
-    }
-    // public PhysicsModifier Physics
-    // {
-    //     get => _instance.Physics;
-    //     set => _instance.Physics = value;
-    // }
+    // private readonly Controller _instance;
 
-    internal ControllerRef(Controller instance)
+    internal ControllerRef(Actor actor, IController instance)
     {
-        _instance = instance;
+        instance.Actor = actor;
+        instance.Input = Input.Input.Instance;
 
         // looking for Start()
         var startMethod = instance.GetType().GetMethod("Start", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

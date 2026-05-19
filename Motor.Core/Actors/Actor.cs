@@ -1,3 +1,4 @@
+using System.Numerics;
 using Motor.Core.Modifiers;
 
 namespace Motor.Core.Actors;
@@ -6,6 +7,16 @@ public abstract class Actor
 {
     readonly Dictionary<Type, ModifierBase> _modifiers = [];
     readonly internal List<Actor> children = [];
+    public Vector2 Position
+    {
+        get => GetModifier<Transform2dModifier>()!.Position;
+        set => GetModifier<Transform2dModifier>()!.Position = value;
+    }
+    public Vector2 Scale
+    {
+        get => GetModifier<Transform2dModifier>()!.Scale;
+        set => GetModifier<Transform2dModifier>()!.Scale = value;
+    }
 
     protected Actor()
     {

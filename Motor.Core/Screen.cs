@@ -12,10 +12,24 @@ public static class Screen
     public const int Width = 128;
     static RenderTexture2D target;
     internal static bool IsOpen => !Raylib.WindowShouldClose();
+    internal static Font Font;
+
+    public static Vector2 ScreenToVirtual(Vector2 screen)
+    {
+        // what is magic number ???
+        var x = screen.X / (_screenWidth / Width + 0.25f);
+        var y = screen.Y / (_screenHeight / Height + 0.25f);
+        return new Vector2(x, y);
+    }
 
     internal static void Init()
     {
+        string resourcesPath = Path.Combine(AppContext.BaseDirectory, "data");
+
         Raylib.InitWindow(_screenWidth, _screenHeight, _windowTitle);
+
+        Font = Raylib.LoadFontEx(Path.Combine(resourcesPath, "PICO-8.ttf"), 5, null, 0);
+        Raylib.SetTextureFilter(Font.Texture, TextureFilter.Point);
 
         Raylib.SetTargetFPS(30);
 
@@ -43,12 +57,12 @@ public static class Screen
 
         Raylib.DrawTexturePro(target.Texture, source, dest, Vector2.Zero, 0, Color.White);
 
-        Raylib.DrawFPS(10, 10);
         Raylib.EndDrawing();
     }
 
     internal static void Close()
     {
+        Raylib.UnloadFont(Font);
         Raylib.UnloadRenderTexture(target);
         Raylib.CloseWindow();
     }

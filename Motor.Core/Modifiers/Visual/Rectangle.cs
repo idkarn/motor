@@ -9,6 +9,11 @@ public class Rectangle : Shape
 
     public override void Draw()
     {
-        Raylib.DrawRectangleV(_transform.WorldPosition, Size, _rayColor);
+        var rect = new Raylib_cs.Rectangle(_transform.WorldPosition - Size / 2, Size);
+
+        if (IsHollow)
+            Raylib.DrawRectangleLinesEx(rect, LineWidth, _rayColor);
+        else
+            Raylib.DrawRectangleRec(rect, _rayColor);
     }
 }
