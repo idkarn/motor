@@ -1,32 +1,18 @@
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Motor.Core.Serialization;
 
 static class Serializer
 {
-    static JsonSerializerSettings opts = new()
+    internal static void Serialize(Game.GameData data)
     {
-        Formatting = Formatting.Indented,
-        ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-        {
-            DefaultMembersSearchFlags =
-            System.Reflection.BindingFlags.Public |
-            System.Reflection.BindingFlags.NonPublic |
-            System.Reflection.BindingFlags.Instance,
-        },
-        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-    };
-
-    internal static void Serialize(Game game)
-    {
-        var json = JsonConvert.SerializeObject(game, opts);
+        var json = JsonSerializer.Serialize(data, GameDataContext.Default.GameData);
         File.WriteAllText("game.json", json);
     }
 
-    internal static Game? Deserialize(string fileName)
+    internal static Game.GameData? Deserialize(string filename)
     {
-        string json = File.ReadAllText(fileName);
-        return JsonConvert.DeserializeObject<Game>(json, opts);
+        string json = File.ReadAllText(filename);
+        return JsonSerializer.Deserialize(json, GameDataContext.Default.GameData);
     }
 }

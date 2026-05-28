@@ -26,8 +26,6 @@ public static class Engine
 
         Raylib_cs.Raylib.SetTraceLogLevel(Raylib_cs.TraceLogLevel.Warning);
 
-        Input.InputManager.Init();
-
         Screen.Init();
 
         State = EngineState.Prepared;
@@ -58,6 +56,8 @@ public static class Engine
         while (State == EngineState.Running)
         {
             _game.MainScene.UpdateTransforms();
+
+            Input.InputManager.Tick();
 
             OnUpdate?.Invoke();
 

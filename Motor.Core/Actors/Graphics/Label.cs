@@ -1,7 +1,9 @@
+using Motor.Core.Guards;
 using Motor.Core.Modifiers.Visual;
 
 namespace Motor.Core.Actors.Graphics;
 
+[RegisterRole("Label")]
 public class Label : Actor
 {
     public int FontSize
@@ -20,7 +22,8 @@ public class Label : Actor
         set => GetModifier<Text>()!.Value = value;
     }
 
-    public Label(string text)
+    public Label(bool isEmpty) : base(isEmpty) { }
+    public Label(string text) : base()
     {
         AddModifier(new Text()
         {

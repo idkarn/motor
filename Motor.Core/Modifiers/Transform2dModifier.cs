@@ -2,9 +2,17 @@ using System.Numerics;
 
 namespace Motor.Core.Modifiers;
 
+[Guards.RegisterModifier("Transform2d", typeof(TransformData))]
 public class Transform2dModifier : TransformModifierBase<Vector2, float, Matrix3x2>
 {
     public static readonly Transform2dModifier Default = new();
+
+    internal static new Transform2dModifier InstantiateFromData(TransformData data) => new()
+    {
+        Position = data.Position,
+        Rotation = data.Rotation,
+        Scale = data.Scale
+    };
 
     public Transform2dModifier()
     {

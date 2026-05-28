@@ -20,4 +20,8 @@ public abstract class Shape<T> : Graphic<T>
         get => GetModifier<Shape>()!.LineWidth;
         set => GetModifier<Shape>()!.LineWidth = value;
     }
+
+    public Shape(bool isEmpty) : base(isEmpty) { }
+
+    public Shape() : base() { }
 }

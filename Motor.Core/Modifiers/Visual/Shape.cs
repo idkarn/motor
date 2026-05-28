@@ -13,9 +13,25 @@ public abstract class Shape : VisualModifierBase
         get => _color;
         set
         {
+            _color = value;
             var clr = value.ToColor();
             _rayColor = new Color(clr.R, clr.G, clr.B, clr.A);
         }
+    }
+
+    internal record ShapeData : VisualData
+    {
+        public bool IsHollow;
+        public int LineWidth;
+        public Color16 Color;
+    }
+
+    internal ShapeData PackInto(Serialization.ModifierPackingContext ctx, ShapeData data)
+    {
+        data.IsHollow = IsHollow;
+        data.LineWidth = LineWidth;
+        data.Color = _color;
+        return (base.PackInto(ctx, data) as ShapeData)!;
     }
 
     public Shape()

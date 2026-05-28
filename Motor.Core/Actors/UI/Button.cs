@@ -7,8 +7,8 @@ public class Button<TArea, TVisual> : Interactive<TArea>
     where TArea : Area2d, new()
     where TVisual : VisualModifierBase, new()
 {
-    TVisual _visual;
-    Text _text;
+    readonly TVisual _visual;
+    readonly Text _text;
     public string Text
     {
         get => _text.Value;

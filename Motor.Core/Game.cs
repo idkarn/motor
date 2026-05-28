@@ -7,14 +7,36 @@ public class Game
     public required string Name;
     public Space MainScene = new();
 
+    internal sealed record GameData
+    {
+        public string Name = null!;
+        public Space.SpaceData MainSpace = null!;
+    }
+
+    internal GameData PackToData() => new()
+    {
+        Name = Name,
+        MainSpace = MainScene.PackToData(new ModifierPackingContext())
+    };
+
+    internal static Game InstantiateFromData(GameData data)
+    {
+        return new()
+        {
+            Name = data.Name,
+            MainScene = Space.InstantiateFromData(data.MainSpace)
+        };
+    }
+
     public void Save()
     {
-        Serializer.Serialize(this);
+        Serializer.Serialize(PackToData());
     }
 
     public static Game LoadFromFile(string fileName)
     {
-        var game = Serializer.Deserialize(fileName) ?? throw new Exception("Err: failed to load game from file!");
-        return game;
+        var data = Serializer.Deserialize(fileName) ?? throw new Exception("Err: failed to load game from file!");
+
+        return InstantiateFromData(data);
     }
 }

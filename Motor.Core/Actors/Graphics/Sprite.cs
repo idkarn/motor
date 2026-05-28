@@ -1,9 +1,8 @@
-using System.Numerics;
 using Motor.Core.Modifiers.Visual;
 
 namespace Motor.Core.Actors.Graphics;
 
-public class Sprite : Graphic<Texture>
+public class Sprite(bool isEmpty) : Graphic<Texture>(isEmpty)
 {
     public string Filename
     {
