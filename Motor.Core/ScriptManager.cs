@@ -14,28 +14,31 @@ class ScriptManager
     static public void LoadScripts(string scriptsFolder)
     {
         Instance ??= new();
+        Instance._scriptTypes.Clear();
 
-        var code = File.ReadAllText(Path.Combine(scriptsFolder, "ButtonScript.cs"));
+        var root = ResolveScriptsFolder(scriptsFolder);
+        var scriptFiles = Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories).ToArray();
 
-        // 1. Parse the syntax tree
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        if (scriptFiles.Length == 0)
+            throw new Exception($"No script files were found in '{root}'.");
 
-        // 2. Define compilation options (Output: Library/DLL)
+        var syntaxTrees = scriptFiles
+            .Select(File.ReadAllText)
+            .Select(text => CSharpSyntaxTree.ParseText(text))
+            .ToArray();
+
         var compilation = CSharpCompilation.Create("UserScripts")
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
             .AddReferences(
-                // You MUST manually provide references in Roslyn
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location), // System.Runtime
                 MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location),
                 MetadataReference.CreateFromFile(Assembly.Load("System.Numerics.Vectors").Location),
                 MetadataReference.CreateFromFile(typeof(Console).Assembly.Location), // System.Console
-                                                                                     // MetadataReference.CreateFromFile(typeof(Vector3).Assembly.Location), // System.Numerics.Vector
                 MetadataReference.CreateFromFile(typeof(Game).Assembly.Location), // Your Engine DLL
                 MetadataReference.CreateFromFile(typeof(Controller).Assembly.Location) // Your Engine DLL
             )
-            .AddSyntaxTrees(syntaxTree);
+            .AddSyntaxTrees(syntaxTrees);
 
-        // 3. Emit (Compile) to memory
         using var ms = new MemoryStream();
         var result = compilation.Emit(ms);
 
@@ -48,11 +51,9 @@ class ScriptManager
             throw new Exception("Compilation failed");
         }
 
-        // 4. Load the resulting assembly
         ms.Seek(0, SeekOrigin.Begin);
         var assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 
-        // 5. Discover types
         foreach (var type in assembly.GetTypes())
         {
             if (type.IsAssignableTo(typeof(IController)))
@@ -63,11 +64,41 @@ class ScriptManager
         }
     }
 
+    static string ResolveScriptsFolder(string scriptsFolder)
+    {
+        if (Path.IsPathRooted(scriptsFolder) && Directory.Exists(scriptsFolder))
+            return scriptsFolder;
+
+        foreach (var basePath in new[] { AppContext.BaseDirectory, Directory.GetCurrentDirectory() })
+        {
+            var current = Path.GetFullPath(basePath);
+
+            while (true)
+            {
+                var candidate = Path.Combine(current, scriptsFolder);
+                if (Directory.Exists(candidate))
+                    return candidate;
+
+                var parent = Directory.GetParent(current);
+                if (parent is null)
+                    break;
+
+                current = parent.FullName;
+            }
+        }
+
+        throw new Exception($"[ERR] Unable to locate scripts folder '{scriptsFolder}'.");
+    }
+
     static public IController? GetScriptByName(string name)
     {
         if (Instance == null)
             throw new Exception("[ERR] ScriptManager is not initialized yet!");
 
-        return Activator.CreateInstance(Instance._scriptTypes[name]) as IController;
+        if (!Instance._scriptTypes.TryGetValue(name, out var scriptType))
+            throw new Exception($"[ERR] Unknown script controller: {name}");
+
+        return Activator.CreateInstance(scriptType) as IController
+            ?? throw new Exception($"[ERR] Script controller '{name}' does not implement IController.");
     }
 }

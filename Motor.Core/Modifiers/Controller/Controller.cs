@@ -13,7 +13,7 @@ public interface IController
 public abstract class Controller<TActor> : ModifierBase, IController
     where TActor : Actor
 {
-    // [InjectModifier] // check ControllerRef for solution
+    [InjectModifier]
     public Transform2dModifier Transform { get; set; } = null!;
     public TActor Actor { get; private set; } = null!;
     Actor IController.Actor

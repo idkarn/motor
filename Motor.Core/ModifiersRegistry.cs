@@ -1,4 +1,3 @@
-using System.Reflection;
 using Motor.Core.Actors;
 using Motor.Core.Guards;
 using Motor.Core.Modifiers;
@@ -45,26 +44,6 @@ static class ModifiersRegistry
 
     static void InjectDependencies(Actor actor, ModifierBase modifier)
     {
-        // Get all fields of the component class (including private fields)
-        FieldInfo[] fields = modifier.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-        foreach (FieldInfo field in fields)
-        {
-            // Check if the field is marked with our [InjectComponent] attribute
-            if (field.IsDefined(typeof(InjectModifierAttribute), false))
-            {
-                Type requiredType = field.FieldType;
-
-                var dependency = actor.GetModifier(requiredType);
-                if (dependency != null)
-                {
-                    field.SetValue(modifier, dependency);
-                }
-                else
-                {
-                    Console.WriteLine($"Entity {actor} is missing a {requiredType.Name} required by {modifier.GetType().Name}!");
-                }
-            }
-        }
+        ModifierDependencyInjector.InjectInto(modifier, actor);
     }
 }
