@@ -22,7 +22,14 @@ public class Label : Actor
         set => GetModifier<Text>()!.Value = value;
     }
 
-    public Label(bool isEmpty) : base(isEmpty) { }
+    public Label(bool isEmpty) : base(isEmpty)
+    {
+        if (!isEmpty)
+            AddModifier(new Text()
+            {
+                Value = "",
+            });
+    }
     public Label(string text) : base()
     {
         AddModifier(new Text()

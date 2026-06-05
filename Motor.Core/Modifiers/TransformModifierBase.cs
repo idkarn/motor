@@ -25,9 +25,4 @@ public abstract class TransformModifierBase<TVector, TRotation, TMatrix> : Modif
         Rotation = Rotation,
         Scale = Scale
     }) as TransformData)!;
-
-    internal static TransformModifierBase<TVector, TRotation, TMatrix> InstantiateFromData(TransformData data)
-    {
-        throw new Exception("not implemented!");
-    }
 }

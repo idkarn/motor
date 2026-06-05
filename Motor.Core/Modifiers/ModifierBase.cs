@@ -8,8 +8,14 @@ public abstract class ModifierBase
     public bool IsEnabled { get; set; } = true;
 
     [JsonPolymorphic]
-    // [JsonDerivedType(typeof(Transform2dModifier.TransformData), "transform2d")]
-    // [JsonDerivedType(typeof(Visual.Rectangle.RectangleData), "rectangle")]
+    [JsonDerivedType(typeof(Transform2dModifier.TransformData), "transform2d")]
+    [JsonDerivedType(typeof(Visual.Rectangle.RectangleData), "rectangle")]
+    [JsonDerivedType(typeof(Visual.Circle.CircleData), "circle")]
+    [JsonDerivedType(typeof(Visual.Text.TextData), "text")]
+    [JsonDerivedType(typeof(Visual.Texture.TextureData), "texture")]
+    [JsonDerivedType(typeof(Area.Rectangle.RectangleAreaData), "rectangleArea")]
+    [JsonDerivedType(typeof(Area.CircleArea.CircleAreaData), "circleArea")]
+    [JsonDerivedType(typeof(Controller.ControllerScript.ScriptData), "script")]
     internal partial record ModifierData
     {
         public string Name = null!;
@@ -26,11 +32,16 @@ public abstract class ModifierBase
         return data;
     }
 
+    internal virtual void InitializeFromData(ModifierData data)
+    {
+        IsEnabled = data.IsEnabled;
+    }
+
     internal static ModifierBase InstantiateFromData(ModifierData data)
     {
-        var instance = ModifierActivator.Create(data.Name, data);
+        var instance = ModifierActivator.Create(data.Name);
 
-        instance.IsEnabled = data.IsEnabled;
+        instance.InitializeFromData(data);
 
         return instance;
     }
@@ -38,5 +49,5 @@ public abstract class ModifierBase
 
 internal static partial class ModifierActivator
 {
-    public static partial ModifierBase Create(string name, ModifierBase.ModifierData data);
+    public static partial ModifierBase Create(string name);
 }

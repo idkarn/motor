@@ -7,12 +7,16 @@ public class Transform2dModifier : TransformModifierBase<Vector2, float, Matrix3
 {
     public static readonly Transform2dModifier Default = new();
 
-    internal static new Transform2dModifier InstantiateFromData(TransformData data) => new()
+    internal override void InitializeFromData(ModifierData data)
     {
-        Position = data.Position,
-        Rotation = data.Rotation,
-        Scale = data.Scale
-    };
+        base.InitializeFromData(data);
+
+        if (data is not TransformData transData) throw new Exception("not a Transform2d!");
+
+        Position = transData.Position;
+        Rotation = transData.Rotation;
+        Scale = transData.Scale;
+    }
 
     public Transform2dModifier()
     {

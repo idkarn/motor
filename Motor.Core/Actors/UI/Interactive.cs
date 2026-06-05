@@ -32,9 +32,11 @@ public abstract class Interactive<TArea> : Actor
         remove => _area.OnMouseUp -= value;
     }
 
-    public Interactive()
+    public Interactive(bool isEmpty) : base(isEmpty)
     {
         _area = new TArea();
-        AddModifier(_area);
+        if (!isEmpty)
+            AddModifier(_area);
     }
+    public Interactive() : this(false) { }
 }

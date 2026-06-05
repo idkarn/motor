@@ -26,6 +26,8 @@ public static class Engine
 
         Raylib_cs.Raylib.SetTraceLogLevel(Raylib_cs.TraceLogLevel.Warning);
 
+        ScriptManager.LoadScripts("Scripts");
+
         Screen.Init();
 
         State = EngineState.Prepared;

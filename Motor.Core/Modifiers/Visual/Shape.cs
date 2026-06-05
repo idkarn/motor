@@ -34,6 +34,17 @@ public abstract class Shape : VisualModifierBase
         return (base.PackInto(ctx, data) as ShapeData)!;
     }
 
+    internal override void InitializeFromData(ModifierData data)
+    {
+        base.InitializeFromData(data);
+
+        if (data is not ShapeData shapeData) throw new Exception("not a Shape!");
+
+        IsHollow = shapeData.IsHollow;
+        LineWidth = shapeData.LineWidth;
+        Color = shapeData.Color;
+    }
+
     public Shape()
     {
         Color = Color16.Green;

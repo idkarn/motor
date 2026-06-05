@@ -1,3 +1,4 @@
+using Motor.Core.Guards;
 using Motor.Core.Modifiers.Area;
 using Motor.Core.Modifiers.Visual;
 
@@ -20,14 +21,30 @@ public class Button<TArea, TVisual> : Interactive<TArea>
         set => _text.Color = value;
     }
 
-    public Button()
+    public Button(bool isEmpty) : base(isEmpty)
     {
         _visual = new TVisual();
-        AddModifier(_visual);
-
         _text = new Text();
-        AddModifier(_text);
+
+        if (!isEmpty)
+        {
+            AddModifier(_visual);
+            AddModifier(_text);
+        }
     }
+    public Button() : this(false) { }
 }
 
-public class Button : Button<Modifiers.Area.Rectangle, Modifiers.Visual.Rectangle> { }
+[RegisterRole("RectButton")]
+public class RectButton : Button<Modifiers.Area.Rectangle, Modifiers.Visual.Rectangle>
+{
+    public RectButton(bool isEmpty) : base(isEmpty) { }
+    public RectButton() : base(false) { }
+}
+
+[RegisterRole("TextureButton")]
+public class TextureButton : Button<Modifiers.Area.Rectangle, Texture>
+{
+    public TextureButton(bool isEmpty) : base(isEmpty) { }
+    public TextureButton() : base(false) { }
+}

@@ -1,4 +1,5 @@
 using Motor.Core.Guards;
+using Motor.Core.Serialization;
 
 namespace Motor.Core.Modifiers.Area;
 
@@ -29,6 +30,28 @@ public abstract class Area2d : ModifierBase
     public event Action? OnClick;
 
     public abstract bool IsMouseOver();
+
+    internal record AreaData : ModifierData
+    {
+        public Transform2dModifier.TransformData Transform;
+        public bool IgnoreMouse;
+    }
+
+    internal AreaData PackInto(ModifierPackingContext ctx, AreaData data)
+    {
+        data.IgnoreMouse = _ignoreMouse;
+        data.Transform = (Transform2dModifier.TransformData)ctx.GetOrPack(_transform);
+        return (PackInto(data) as AreaData)!;
+    }
+
+    internal override void InitializeFromData(ModifierData data)
+    {
+        base.InitializeFromData(data);
+
+        if (data is not AreaData areaData) throw new Exception("not an Area!");
+
+        IgnoreMouse = areaData.IgnoreMouse;
+    }
 
     protected virtual void Update()
     {

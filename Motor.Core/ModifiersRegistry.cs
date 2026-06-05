@@ -18,6 +18,8 @@ static class ModifiersRegistry
             _drawables.Add(_drawableMod);
         else if (modifier is IController _controllerMod)
             _controllers.Add(new ControllerRef(actor, _controllerMod));
+        else if (modifier is ControllerScript script)
+            _controllers.Add(new ControllerRef(actor, script.InstantiateController()));
 
         InjectDependencies(actor, modifier);
     }

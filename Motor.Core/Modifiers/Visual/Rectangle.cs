@@ -18,18 +18,13 @@ public class Rectangle : Shape
         Size = Size
     }) as RectangleData)!;
 
-    internal static Rectangle InstantiateFromData(RectangleData data)
+    internal override void InitializeFromData(ModifierData data)
     {
-        // todo: move other than Size to base class
-        Rectangle instance = new()
-        {
-            Size = data.Size,
-            Color = data.Color,
-            IsHollow = data.IsHollow,
-            LineWidth = data.LineWidth
-        };
+        base.InitializeFromData(data);
 
-        return instance;
+        if (data is not RectangleData rectData) throw new Exception("not a Rectangle!");
+
+        Size = rectData.Size;
     }
 
     public override void Draw()

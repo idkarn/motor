@@ -7,12 +7,12 @@ class ControllerRef
 {
     private readonly Action? _startMethod;
     private readonly Action<float>? _updateMethod;
-    // private readonly Controller _instance;
 
     internal ControllerRef(Actor actor, IController instance)
     {
         instance.Actor = actor;
         instance.Input = Input.Input.Instance;
+        instance.Transform = actor.GetModifier<Transform2dModifier>()!; // fixme: refactor this. IT TOOK SEVERAL HOURS!!!
 
         // looking for Start()
         var startMethod = instance.GetType().GetMethod("Start", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

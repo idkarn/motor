@@ -1,13 +1,34 @@
 using System.Numerics;
+using Motor.Core.Serialization;
 using Raylib_cs;
 
 namespace Motor.Core.Modifiers.Visual;
 
+[Guards.RegisterModifier("Texture", typeof(TextureData))]
 public class Texture : VisualModifierBase
 {
     Texture2D? _texture;
     Raylib_cs.Rectangle _rect;
     public string Filename = "";
+
+    internal sealed record TextureData : VisualData
+    {
+        public string Filename;
+    }
+
+    internal override TextureData PackToData(ModifierPackingContext ctx) => (PackInto(ctx, new TextureData()
+    {
+        Filename = Filename
+    }) as TextureData)!;
+
+    internal override void InitializeFromData(ModifierData data)
+    {
+        base.InitializeFromData(data);
+
+        if (data is not TextureData txData) throw new Exception("not a Texture!");
+
+        Load(txData.Filename);
+    }
 
     public void Load(string filename)
     {

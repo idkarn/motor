@@ -7,14 +7,15 @@ public interface IController
 {
     Input.Input Input { get; set; }
     Actor Actor { get; set; }
+    Transform2dModifier Transform { get; set; }
 }
 
 public abstract class Controller<TActor> : ModifierBase, IController
     where TActor : Actor
 {
-    [InjectModifier]
-    public Transform2dModifier Transform = null!;
-    public TActor Actor { get; set; } = null!;
+    // [InjectModifier] // check ControllerRef for solution
+    public Transform2dModifier Transform { get; set; } = null!;
+    public TActor Actor { get; private set; } = null!;
     Actor IController.Actor
     {
         get => this.Actor;
@@ -25,7 +26,6 @@ public abstract class Controller<TActor> : ModifierBase, IController
     public TModifier? GetModifier<TModifier>() where TModifier : ModifierBase
         => Actor.GetModifier<TModifier>();
     public ModifierBase? GetModifier(Type type) => Actor.GetModifier(type);
-
 }
 
 public abstract class Controller : Controller<Actor> { }

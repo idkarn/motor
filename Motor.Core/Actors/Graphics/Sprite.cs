@@ -1,12 +1,17 @@
+using Motor.Core.Guards;
 using Motor.Core.Modifiers.Visual;
 
 namespace Motor.Core.Actors.Graphics;
 
-public class Sprite(bool isEmpty) : Graphic<Texture>(isEmpty)
+[RegisterRole("Sprite")]
+public class Sprite : Graphic<Texture>
 {
     public string Filename
     {
         get => GetModifier<Texture>()!.Filename;
         set => GetModifier<Texture>()!.Load(value);
     }
+
+    public Sprite(bool isEmpty) : base(isEmpty) { }
+    public Sprite() : base() { }
 }

@@ -69,7 +69,7 @@ public class ModifierActivatorGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.AppendLine("internal static partial class ModifierActivator");
         sb.AppendLine("{");
-        sb.AppendLine("    public static partial ModifierBase Create(string name, ModifierBase.ModifierData data)");
+        sb.AppendLine("    public static partial ModifierBase Create(string name)");
         sb.AppendLine("    {");
         sb.AppendLine("        return name switch");
         sb.AppendLine("        {");
@@ -77,7 +77,7 @@ public class ModifierActivatorGenerator : IIncrementalGenerator
         // Генерируем строки для каждого найденного класса актора
         foreach (var modifier in classes.Distinct())
         {
-            sb.AppendLine($"            \"{modifier.Name}\" => {modifier.FullClassName}.InstantiateFromData((data as {modifier.FullDtoName})!),");
+            sb.AppendLine($"            \"{modifier.Name}\" => new {modifier.FullClassName}(),");
         }
 
         sb.AppendLine("            _ => throw new Exception($\"Unknown modifier name: {name}\")");
