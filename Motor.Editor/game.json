@@ -218,10 +218,17 @@
             },
             "Name": "Text",
             "IsEnabled": true
+          },
+          {
+            "$id": "24",
+            "$type": "script",
+            "ClassName": "ButtonController",
+            "Name": "Script",
+            "IsEnabled": true
           }
         ],
         "Children": {
-          "$id": "24",
+          "$id": "25",
           "$values": []
         }
       }

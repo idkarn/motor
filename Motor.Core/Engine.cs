@@ -26,7 +26,7 @@ public static class Engine
 
         Raylib_cs.Raylib.SetTraceLogLevel(Raylib_cs.TraceLogLevel.Warning);
 
-        ScriptManager.LoadScripts("Scripts");
+        ScriptManager.LoadScripts("data/Scripts");
 
         Screen.Init();
 

@@ -5,7 +5,10 @@ namespace Motor.Core.Actors.UI;
 public abstract class Interactive<TArea> : Actor
     where TArea : Area2d, new()
 {
-    readonly TArea _area;
+    Area2d _area // todo: make inline as everywhere
+    {
+        get => GetModifier<Area2d>()!;
+    }
     public event Action? MouseEnter
     {
         add => _area.OnMouseEnter += value;
@@ -34,9 +37,8 @@ public abstract class Interactive<TArea> : Actor
 
     public Interactive(bool isEmpty) : base(isEmpty)
     {
-        _area = new TArea();
         if (!isEmpty)
-            AddModifier(_area);
+            AddModifier(new TArea());
     }
     public Interactive() : this(false) { }
 }

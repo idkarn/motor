@@ -8,28 +8,23 @@ public class Button<TArea, TVisual> : Interactive<TArea>
     where TArea : Area2d, new()
     where TVisual : VisualModifierBase, new()
 {
-    readonly TVisual _visual;
-    readonly Text _text;
     public string Text
     {
-        get => _text.Value;
-        set => _text.Value = value;
+        get => GetModifier<Text>()!.Value;
+        set => GetModifier<Text>()!.Value = value;
     }
     public Color16 TextColor
     {
-        get => _text.Color;
-        set => _text.Color = value;
+        get => GetModifier<Text>()!.Color;
+        set => GetModifier<Text>()!.Color = value;
     }
 
     public Button(bool isEmpty) : base(isEmpty)
     {
-        _visual = new TVisual();
-        _text = new Text();
-
         if (!isEmpty)
         {
-            AddModifier(_visual);
-            AddModifier(_text);
+            AddModifier(new TVisual());
+            AddModifier(new Text());
         }
     }
     public Button() : this(false) { }
