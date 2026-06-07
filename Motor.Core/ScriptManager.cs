@@ -19,8 +19,8 @@ class ScriptManager
         var root = ResolveScriptsFolder(scriptsFolder);
         var scriptFiles = Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories).ToArray();
 
-        if (scriptFiles.Length == 0)
-            throw new Exception($"No script files were found in '{root}'.");
+        Console.WriteLine($"{scriptFiles.Length} script files were found in '{root}'.");
+        if (scriptFiles.Length == 0) return;
 
         var syntaxTrees = scriptFiles
             .Select(File.ReadAllText)

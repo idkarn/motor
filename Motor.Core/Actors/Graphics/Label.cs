@@ -21,6 +21,11 @@ public class Label : Actor
         get => GetModifier<Text>()!.Value;
         set => GetModifier<Text>()!.Value = value;
     }
+    public bool IsCentered
+    {
+        get => GetModifier<Text>()!.IsCentered;
+        set => GetModifier<Text>()!.IsCentered = value;
+    }
 
     public Label(bool isEmpty) : base(isEmpty)
     {

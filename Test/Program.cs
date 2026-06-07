@@ -120,9 +120,9 @@ class Program
             camera.Zoom = MathF.Min(10.0f, (float)Math.Min(screenWidth / (maxX - minX + (padding * 2f)), screenHeight / (maxY - minY + (padding * 2f))));
 
             if (Raylib.IsKeyDown(KeyboardKey.Down))
-                speed -= deltaTime;
+                speed -= Raylib.GetFrameTime();
             else if (Raylib.IsKeyDown(KeyboardKey.Up))
-                speed += deltaTime;
+                speed += Raylib.GetFrameTime();
 
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.Black);
@@ -136,7 +136,7 @@ class Program
                 if (points.Length >= 4)
                     Raylib.DrawSplineCatmullRom([.. points.Select(x => new Vector2((float)x[0], (float)x[1]))], points.Length, 1.0f, body.Color);
 
-                Raylib.DrawCircle((int)body.Pos[0], (int)body.Pos[1], dotRadius, Color.Maroon);
+                Raylib.DrawCircle((int)body.Pos[0], (int)body.Pos[1], (float)Math.Log10(dotRadius * body.Mass), Color.Maroon);
             }
 
             Raylib.EndMode2D();

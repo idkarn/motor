@@ -18,12 +18,16 @@ public abstract class Actor
         get => GetModifier<Transform2dModifier>()!.Scale;
         set => GetModifier<Transform2dModifier>()!.Scale = value;
     }
+    public string Name = "Actor";
+    internal List<string> Tags = [];
 
     internal record ActorData
     {
+        public string Name = null!;
         public string Role = null!;
         public ModifierBase.ModifierData[] Modifiers = null!;
         public List<Actor> Children = null!;
+        public List<string> Tags = null!;
     }
 
     protected Actor(bool isEmpty = false)
@@ -36,9 +40,11 @@ public abstract class Actor
 
     internal virtual ActorData PackToData(Serialization.ModifierPackingContext ctx) => new()
     {
+        Name = Name,
         Role = GetType().GetCustomAttribute<Guards.RegisterRoleAttribute>()?.RoleName ?? "unknown",
         Modifiers = [.. _modifiers.Values.SelectMany(list => list).Distinct().Select(ctx.GetOrPack)],
-        Children = children
+        Children = children,
+        Tags = Tags,
     };
 
     internal static Actor InstantiateFromData(ActorData data)
@@ -49,6 +55,11 @@ public abstract class Actor
             instance.AddModifier(ModifierBase.InstantiateFromData(mod));
 
         return instance;
+    }
+
+    public void AddTag(string tag)
+    {
+        Tags.Add(tag);
     }
 
     public void AddChild(Actor child)

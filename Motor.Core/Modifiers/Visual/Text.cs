@@ -20,19 +20,22 @@ public class Text : VisualModifierBase
             _rayColor = new Color(clr.R, clr.G, clr.B, clr.A);
         }
     }
+    public bool IsCentered = false;
 
     internal sealed record TextData : VisualData
     {
         public string Value;
         public int FontSize;
         public Color16 Color;
+        public bool IsCentered;
     }
 
     internal override ModifierData PackToData(ModifierPackingContext ctx) => (PackInto(ctx, new TextData
     {
         Value = Value,
         FontSize = FontSize,
-        Color = _color
+        Color = _color,
+        IsCentered = IsCentered
     }) as TextData)!;
 
     internal override void InitializeFromData(ModifierData data)
@@ -48,7 +51,11 @@ public class Text : VisualModifierBase
 
     public override void Draw()
     {
-        Raylib.DrawTextEx(Screen.Font, Value, _transform.Position - Raylib.MeasureTextEx(Screen.Font, Value, FontSize, 1) / 2, FontSize, 1, _rayColor);
+        // todo: optimize text measuring on every frame!
+        var origin = _transform.Position;
+        if (IsCentered)
+            origin -= Raylib.MeasureTextEx(Screen.Font, Value, FontSize, 1) / 2;
+        Raylib.DrawTextEx(Screen.Font, Value, origin, FontSize, 1, _rayColor);
     }
 
     public Text()

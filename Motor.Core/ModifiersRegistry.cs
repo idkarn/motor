@@ -21,6 +21,9 @@ static class ModifiersRegistry
             _controllers.Add(new ControllerRef(actor, script.InstantiateController()));
 
         InjectDependencies(actor, modifier);
+
+        if (Engine.State == EngineState.Running)
+            _controllers[_controllers.Count - 1].Start();
     }
 
     internal static void StartAll()

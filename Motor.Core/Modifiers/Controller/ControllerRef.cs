@@ -36,10 +36,24 @@ class ControllerRef
     {
         const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-        var startMethod = controllerType.GetMethod("Start", flags, null, Type.EmptyTypes, null);
-        var updateMethod = controllerType.GetMethod("Update", flags, null, [typeof(float)], null);
+        // Recursively search the type and its base classes for the method
+        var startMethod = GetMethodInHierarchy(controllerType, "Start", flags, Type.EmptyTypes);
+        var updateMethod = GetMethodInHierarchy(controllerType, "Update", flags, [typeof(float)]);
 
         return new ControllerHooks(startMethod, updateMethod);
+    }
+
+    static MethodInfo? GetMethodInHierarchy(Type type, string name, BindingFlags flags, Type[] parameterTypes)
+    {
+        while (type != null)
+        {
+            var method = type.GetMethod(name, flags, null, parameterTypes, null);
+            if (method != null)
+                return method;
+
+            type = type.BaseType;
+        }
+        return null;
     }
 
     readonly record struct ControllerHooks(MethodInfo? Start, MethodInfo? Update);

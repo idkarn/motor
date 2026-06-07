@@ -34,6 +34,8 @@ public class Texture : VisualModifierBase
     {
         Filename = filename;
 
+        // todo: separated function to look for assets
+
         var img = Raylib.LoadImage(filename);
 
         if (_texture is Texture2D _tex)
